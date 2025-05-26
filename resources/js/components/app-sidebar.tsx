@@ -4,7 +4,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { Folder, LayoutGrid } from 'lucide-react';
+import { Github, LayoutGrid, Library } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -13,13 +13,18 @@ const mainNavItems: NavItem[] = [
         url: '/dashboard',
         icon: LayoutGrid,
     },
+    {
+        title: 'Resources',
+        url: '/resources',
+        icon: Library,
+    },
 ];
 
 const footerNavItems: NavItem[] = [
     {
         title: 'Repository',
         url: 'https://github.com/chrystalio/lareact-starter-kit',
-        icon: Folder,
+        icon: Github,
     }
 ];
 
