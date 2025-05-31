@@ -23,6 +23,7 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { Button } from '@/components/ui/button';
+import { DataTablePagination } from '@/components/ui/data-table-pagination';
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -58,13 +59,13 @@ export function DataTable<TData, TValue>({columns, data, columnFilters, onColumn
 
     return (
         <div>
-            <Table className="table-bordered w-full">
+            <Table className="w-full">
                 <TableHeader>
                     {table.getHeaderGroups().map((headerGroup) => (
                         <TableRow key={headerGroup.id}>
                             {headerGroup.headers.map((header) => {
                                 return (
-                                    <TableHead key={header.id}>
+                                    <TableHead key={header.id} >
                                         {header.isPlaceholder
                                             ? null
                                             : flexRender(
@@ -100,24 +101,7 @@ export function DataTable<TData, TValue>({columns, data, columnFilters, onColumn
                     )}
                 </TableBody>
             </Table>
-            <div className="flex items-center justify-end space-x-2">
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => table.previousPage()}
-                    disabled={!table.getCanPreviousPage()}
-                >
-                    Previous
-                </Button>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => table.nextPage()}
-                    disabled={!table.getCanNextPage()}
-                >
-                    Next
-                </Button>
-            </div>
+            <DataTablePagination table={table} />
         </div>
     )
 }
