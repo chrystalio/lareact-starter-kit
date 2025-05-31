@@ -4,7 +4,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { Github, LayoutGrid, Library } from 'lucide-react';
+import { Github, LayoutGrid, Library, Users } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -18,6 +18,11 @@ const mainNavItems: NavItem[] = [
         url: '/resources',
         icon: Library,
     },
+    {
+        'title': 'Roles',
+        'url': '/admin/roles',
+        'icon': Users,
+    }
 ];
 
 const footerNavItems: NavItem[] = [
