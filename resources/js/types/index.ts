@@ -56,3 +56,12 @@ export interface FormDialogProps {
     onOpenChange?: (open: boolean) => void;
     children: React.ReactNode;
 }
+
+export interface ConfirmDialogProps {
+    isOpen: boolean
+    onOpenChange: (open: boolean) => void
+    title: string
+    description: string
+    onConfirm: () => void
+    isLoading?: boolean
+}
