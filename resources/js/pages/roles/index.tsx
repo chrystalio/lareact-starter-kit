@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 import AppLayout from '@/layouts/app-layout';
 import { Head } from '@inertiajs/react';
 import { ColumnFiltersState } from '@tanstack/react-table';
-import { columns } from './columns'
+import { getColumns } from './columns'
 import { DataTable } from '@/components/ui/data-table'
 import type { BreadcrumbItem, Role } from '@/types';
 import { Card, CardContent } from '@/components/ui/card';
@@ -27,6 +27,8 @@ export default function Index({ roles }: { roles: Role[] }) {
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [isDialogOpen, setIsDialogOpen] = useState(false)
+    const [editingRole, setEditingRole] = useState<Role | null>(null);
+
     const { props } = usePage<{ success?: string }>();
 
     useEffect(() => {
@@ -56,41 +58,69 @@ export default function Index({ roles }: { roles: Role[] }) {
                             />
 
                             <FormDialog
-                                title="Create Role"
+                                title={editingRole ? "Edit Role" : "Create Role"}
                                 triggerText="Create Role"
                                 isLoading={isSubmitting}
                                 isOpen={isDialogOpen}
-                                onOpenChange={setIsDialogOpen}
-                                onSubmit={(e) => {
-                                    e.preventDefault();
-                                    setIsSubmitting(true);
-                                    const formData = new FormData(e.currentTarget);
-                                    const name = formData.get('name') as string;
-
-                                    router.post('/admin/roles', { name }, {
-                                        onSuccess: () => {
-                                            toast.success("Role created", {
-                                                description: "A new role has been added.",
-                                            })
-                                            setIsDialogOpen(false);
-                                        },
-                                        onError: (errors) => {
-                                            toast.error("Failed to create role", {
-                                                description: errors.name ?? "There was an error creating the role.",
-                                            });
-                                        },
-                                        onFinish: () => setIsSubmitting(false),
-                                    });
+                                onOpenChange={(open) => {
+                                    if (!open) setEditingRole(null)
+                                    setIsDialogOpen(open)
                                 }}
-                            >
+                                onSubmit={(e) => {
+                                    e.preventDefault()
+                                    setIsSubmitting(true)
+
+                                    const formData = new FormData(e.currentTarget)
+                                    const name = formData.get('name') as string
+
+                                    if (editingRole) {
+                                        router.put(`/admin/roles/${editingRole.id}`, { name }, {
+                                            onSuccess: () => {
+                                                toast.success("Role updated", {
+                                                    description: "Role has been updated.",
+                                                })
+                                                setEditingRole(null)
+                                                setIsDialogOpen(false)
+                                            },
+                                            onError: (errors) => {
+                                                toast.error("Failed to update role", {
+                                                    description: errors.name ?? "There was an error updating the role.",
+                                                })
+                                            },
+                                            onFinish: () => setIsSubmitting(false)
+                                        })
+                                    } else {
+                                        router.post('/admin/roles', { name }, {
+                                            onSuccess: () => {
+                                                toast.success("Role created", {
+                                                    description: "A new role has been added.",
+                                                })
+                                                setIsDialogOpen(false)
+                                            },
+                                            onError: (errors) => {
+                                                toast.error("Failed to create role", {
+                                                    description: errors.name ?? "There was an error creating the role.",
+                                                })
+                                            },
+                                            onFinish: () => setIsSubmitting(false)
+                                        })
+                                    }
+                                }}
+                                >
                                 <div className="space-y-2">
                                     <Label htmlFor="name">Role Name</Label>
-                                    <Input name="name" id="name" placeholder="e.g. Admin" />
+                                    <Input
+                                        name="name"
+                                        id="name"
+                                        placeholder="e.g. Admin"
+                                        defaultValue={editingRole?.name ?? ""}
+                                    />
                                 </div>
                             </FormDialog>
+
                         </div>
 
-                        <DataTable columns={columns} data={roles} columnFilters={columnFilters} onColumnFiltersChange={setColumnFilters} />
+                        <DataTable  columns={getColumns(setEditingRole, setIsDialogOpen)} data={roles} columnFilters={columnFilters} onColumnFiltersChange={setColumnFilters} />
                     </CardContent>
                 </Card>
             </div>
