@@ -14,7 +14,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 
     Route::prefix('admin')->group(function () {
-        Route::resource('roles', RoleController::class)->only(['index', 'create', 'store']);
+        Route::resource('roles', RoleController::class);
     });
 });
 
