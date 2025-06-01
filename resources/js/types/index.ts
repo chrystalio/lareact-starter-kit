@@ -51,6 +51,8 @@ export interface FormDialogProps {
     title: string;
     triggerText: string;
     isLoading?: boolean;
+    isOpen?: boolean;
     onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+    onOpenChange?: (open: boolean) => void;
     children: React.ReactNode;
 }
