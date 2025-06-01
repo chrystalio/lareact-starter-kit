@@ -11,9 +11,9 @@ import {
 import { Button } from "@/components/ui/button"
 import type { FormDialogProps } from "@/types"
 
-export function FormDialog({ title, triggerText, isLoading = false, onSubmit, children, }: FormDialogProps) {
+export function FormDialog({ title, triggerText, isLoading = false, isOpen, onOpenChange, onSubmit, children, }: FormDialogProps) {
     return (
-        <Dialog>
+        <Dialog open={isOpen} onOpenChange={onOpenChange}>
             <DialogTrigger asChild>
                 <Button variant="default">{triggerText}</Button>
             </DialogTrigger>
