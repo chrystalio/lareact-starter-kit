@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { usePage } from '@inertiajs/react'
+import { useEffect } from 'react'
 import AppLayout from '@/layouts/app-layout';
 import { Head } from '@inertiajs/react';
 import { ColumnFiltersState } from '@tanstack/react-table';
@@ -9,6 +11,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { FormDialog } from '@/components/ui/form-dialog';
+import { toast } from "sonner"
 import { router } from '@inertiajs/react';
 
 
@@ -23,6 +26,16 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function Index({ roles }: { roles: Role[] }) {
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [isSubmitting, setIsSubmitting] = useState(false)
+    const [isDialogOpen, setIsDialogOpen] = useState(false)
+    const { props } = usePage<{ success?: string }>();
+
+    useEffect(() => {
+        if (props.success) {
+            toast.success("Success", {
+                description: props.success,
+            });
+        }
+    }, [props.success]);
 
     const handleFilterChange = (value: string) => {
         setColumnFilters([{ id: 'name', value }])
@@ -46,6 +59,8 @@ export default function Index({ roles }: { roles: Role[] }) {
                                 title="Create Role"
                                 triggerText="Create Role"
                                 isLoading={isSubmitting}
+                                isOpen={isDialogOpen}
+                                onOpenChange={setIsDialogOpen}
                                 onSubmit={(e) => {
                                     e.preventDefault();
                                     setIsSubmitting(true);
@@ -53,6 +68,17 @@ export default function Index({ roles }: { roles: Role[] }) {
                                     const name = formData.get('name') as string;
 
                                     router.post('/admin/roles', { name }, {
+                                        onSuccess: () => {
+                                            toast.success("Role created", {
+                                                description: "A new role has been added.",
+                                            })
+                                            setIsDialogOpen(false);
+                                        },
+                                        onError: (errors) => {
+                                            toast.error("Failed to create role", {
+                                                description: errors.name ?? "There was an error creating the role.",
+                                            });
+                                        },
                                         onFinish: () => setIsSubmitting(false),
                                     });
                                 }}
