@@ -45,3 +45,12 @@ export type Role = {
     created_at?: string
     updated_at?: string
 }
+
+
+export interface FormDialogProps {
+    title: string;
+    triggerText: string;
+    isLoading?: boolean;
+    onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+    children: React.ReactNode;
+}
