@@ -11,6 +11,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { FormDialog } from '@/components/ui/form-dialog';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { toast } from "sonner"
 import { router } from '@inertiajs/react';
 
@@ -28,6 +29,10 @@ export default function Index({ roles }: { roles: Role[] }) {
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [isDialogOpen, setIsDialogOpen] = useState(false)
     const [editingRole, setEditingRole] = useState<Role | null>(null);
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+    const [roleToDelete, setRoleToDelete] = useState<Role | null>(null)
+    const [isDeleting, setIsDeleting] = useState(false)
+
 
     const { props } = usePage<{ success?: string }>();
 
@@ -117,10 +122,37 @@ export default function Index({ roles }: { roles: Role[] }) {
                                     />
                                 </div>
                             </FormDialog>
+                            <ConfirmDialog
+                                isOpen={isDeleteDialogOpen}
+                                onOpenChange={setIsDeleteDialogOpen}
+                                title="Delete Role"
+                                description={`Are you sure you want to delete the role "${roleToDelete?.name}"? This action cannot be undone.`}
+                                isLoading={isDeleting}
+                                onConfirm={() => {
+                                    if (!roleToDelete) return
+                                    setIsDeleting(true)
 
+                                    router.delete(`/admin/roles/${roleToDelete.id}`, {
+                                        onSuccess: () => {
+                                            toast.success("Role deleted", {
+                                                description: "The role has been removed.",
+                                            })
+
+                                            setIsDeleteDialogOpen(false)
+                                            setRoleToDelete(null)
+
+                                            router.reload({ only: ['roles'] })
+                                        },
+                                        onError: () => {
+                                            toast.error("Failed to delete role", { description: "An error occurred while deleting the role." })
+                                        },
+                                        onFinish: () => setIsDeleting(false),
+                                    })
+                                }}
+                            />
                         </div>
 
-                        <DataTable  columns={getColumns(setEditingRole, setIsDialogOpen)} data={roles} columnFilters={columnFilters} onColumnFiltersChange={setColumnFilters} />
+                        <DataTable  columns={getColumns(setEditingRole, setIsDialogOpen, setRoleToDelete, setIsDeleteDialogOpen)} data={roles} columnFilters={columnFilters} onColumnFiltersChange={setColumnFilters} />
                     </CardContent>
                 </Card>
             </div>

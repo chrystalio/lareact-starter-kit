@@ -12,7 +12,9 @@ import { DataTableColumnHeader } from '@/components/ui/data-table-column-header'
 
 export const getColumns = (
     setEditingRole: (role: Role) => void,
-    setDialogOpen: (open: boolean) => void
+    setDialogOpen: (open: boolean) => void,
+    setRoleToDelete: (role: Role | null) => void,
+    setDeleteDialogOpen: (open: boolean) => void
 ): ColumnDef<Role>[] => [
     {
         accessorKey: 'name',
@@ -41,10 +43,14 @@ export const getColumns = (
                             <PencilIcon className="h-4 w-4 mr-2" /> Edit
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                            onClick={() => console.log('Delete', role.id)}
+                            onClick={() => {
+                                setRoleToDelete(role)
+                                setDeleteDialogOpen(true)
+                            }}
                             className="text-red-500"
                         >
-                            <LucideTrash className="h-4 w-4 mr-2" /> Delete
+                            <LucideTrash className="h-4 w-4 mr-2" />
+                            Delete
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
