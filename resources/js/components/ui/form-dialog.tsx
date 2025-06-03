@@ -14,9 +14,11 @@ import type { FormDialogProps } from "@/types"
 export function FormDialog({ title, triggerText, isLoading = false, isOpen, onOpenChange, onSubmit, children, }: FormDialogProps) {
     return (
         <Dialog open={isOpen} onOpenChange={onOpenChange}>
-            <DialogTrigger asChild>
-                <Button variant="default">{triggerText}</Button>
-            </DialogTrigger>
+            {triggerText && (
+                <DialogTrigger asChild>
+                    <Button variant="default">{triggerText}</Button>
+                </DialogTrigger>
+            )}
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>{title}</DialogTitle>
