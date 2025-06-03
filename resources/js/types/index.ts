@@ -36,7 +36,8 @@ export interface User {
     email_verified_at: string | null;
     created_at: string;
     updated_at: string;
-    [key: string]: unknown; // This allows for additional properties...
+    roles: Role[];
+    [key: string]: unknown;
 }
 
 export type Role = {
@@ -49,7 +50,7 @@ export type Role = {
 
 export interface FormDialogProps {
     title: string;
-    triggerText: string;
+    triggerText?: string;
     isLoading?: boolean;
     isOpen?: boolean;
     onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
@@ -64,4 +65,8 @@ export interface ConfirmDialogProps {
     description: string
     onConfirm: () => void
     isLoading?: boolean
+}
+
+export type RoleFormData = {
+    roles: string[]
 }
