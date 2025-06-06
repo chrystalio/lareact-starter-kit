@@ -1,12 +1,12 @@
 import type { Role } from '@/types'
 import { ColumnDef } from '@tanstack/react-table'
-import { LucideTrash, MoreHorizontal, PencilIcon } from 'lucide-react';
+import { LucideTrash, MoreHorizontal, PencilIcon, ShieldPlus } from 'lucide-react';
 import {
     DropdownMenu,
     DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+    DropdownMenuItem, DropdownMenuSeparator,
+    DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button'
 import { DataTableColumnHeader } from '@/components/ui/data-table-column-header';
 
@@ -14,7 +14,8 @@ export const getColumns = (
     setEditingRole: (role: Role) => void,
     setDialogOpen: (open: boolean) => void,
     setRoleToDelete: (role: Role | null) => void,
-    setDeleteDialogOpen: (open: boolean) => void
+    setDeleteDialogOpen: (open: boolean) => void,
+    handleManagePermissions: (role: Role) => void
 ): ColumnDef<Role>[] => [
     {
         accessorKey: 'name',
@@ -36,6 +37,11 @@ export const getColumns = (
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => handleManagePermissions(role)}>
+                            <ShieldPlus className="h-4 w-4 mr-2" />
+                            Manage Permissions
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={() => {
                             setEditingRole(role);
                             setDialogOpen(true);
