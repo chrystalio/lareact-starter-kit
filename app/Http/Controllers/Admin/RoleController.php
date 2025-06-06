@@ -1,15 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRoleRequest;
 use App\Http\Requests\UpdateRoleRequest;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Session\Store;
+use Inertia\Inertia;
 use Inertia\Response;
 use Spatie\Permission\Models\Role;
-use Inertia\Inertia;
 
 class RoleController extends Controller
 {
@@ -18,7 +17,7 @@ class RoleController extends Controller
      */
     public function index(): Response
     {
-        return Inertia::render('roles/index', [
+        return Inertia::render('admin/roles/index', [
             'roles' => Role::select('id', 'name')->get(),
         ]);
     }
@@ -28,7 +27,7 @@ class RoleController extends Controller
      */
     public function create()
     {
-        return Inertia::render('pages/roles/create');
+        return Inertia::render('pages/admin/roles/create');
     }
 
     /**
