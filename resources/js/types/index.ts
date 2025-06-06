@@ -70,3 +70,15 @@ export interface ConfirmDialogProps {
 export type RoleFormData = {
     roles: string[]
 }
+
+export interface Permission {
+    id: number
+    name: string
+    guard_name: string
+}
+
+export interface RolePermissionPageProps {
+    role: Role
+    permissions: Record<string, Permission[]>
+    assigned: string[]
+}
