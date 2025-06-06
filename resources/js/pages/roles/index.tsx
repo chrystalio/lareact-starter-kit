@@ -6,7 +6,7 @@ import { Head } from '@inertiajs/react';
 import { ColumnFiltersState } from '@tanstack/react-table';
 import { getColumns } from './columns'
 import { DataTable } from '@/components/ui/data-table'
-import type { BreadcrumbItem, Role } from '@/types';
+import type { BreadcrumbItem, Role, RolePermissionPageProps } from '@/types';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,6 +14,8 @@ import { FormDialog } from '@/components/ui/form-dialog';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { toast } from "sonner"
 import { router } from '@inertiajs/react';
+import PermissionDialog from '@/components/dialogs/permission-dialog';
+import axios from 'axios';
 
 
 
@@ -32,17 +34,41 @@ export default function Index({ roles }: { roles: Role[] }) {
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
     const [roleToDelete, setRoleToDelete] = useState<Role | null>(null)
     const [isDeleting, setIsDeleting] = useState(false)
+    const [selectedRole, setSelectedRole] = useState<Role | null>(null)
+    const [permissionsData, setPermissionsData] = useState<RolePermissionPageProps | null>(null)
+    const [isPermissionsDialogOpen, setIsPermissionsDialogOpen] = useState(false)
 
 
     const { props } = usePage<{ success?: string }>();
 
     useEffect(() => {
+        setIsPermissionsDialogOpen(true);
         if (props.success) {
             toast.success("Success", {
                 description: props.success,
             });
         }
     }, [props.success]);
+
+
+    const handleManagePermissions = (role: Role) => {
+        console.log('Fetching permissions for role:', role)
+        axios.get(`/admin/roles/${role.id}/permissions`)
+            .then((res) => {
+                const { role, permissions, assigned } = res.data
+                setSelectedRole(role)
+                setPermissionsData({ role, permissions, assigned })
+                setIsPermissionsDialogOpen(true)
+            })
+            .catch((error) => {
+                console.error('Error fetching permissions:', error)
+                toast.error("Failed to fetch permissions", {
+                    description: "There was an error retrieving the permissions for this role.",
+                })
+            })
+
+    }
+
 
     const handleFilterChange = (value: string) => {
         setColumnFilters([{ id: 'name', value }])
@@ -61,6 +87,14 @@ export default function Index({ roles }: { roles: Role[] }) {
                                 onChange={(e) => handleFilterChange(e.target.value)}
                                 className="w-full sm:w-64"
                             />
+                            {isPermissionsDialogOpen && permissionsData && selectedRole && (
+                                <PermissionDialog
+                                    role={permissionsData.role}
+                                    permissions={permissionsData.permissions}
+                                    assigned={permissionsData.assigned}
+                                    onClose={() => setIsPermissionsDialogOpen(false)}
+                                />
+                            )}
 
                             <FormDialog
                                 title={editingRole ? "Edit Role" : "Create Role"}
@@ -151,8 +185,20 @@ export default function Index({ roles }: { roles: Role[] }) {
                                 }}
                             />
                         </div>
-
-                        <DataTable  columns={getColumns(setEditingRole, setIsDialogOpen, setRoleToDelete, setIsDeleteDialogOpen)} data={roles} columnFilters={columnFilters} onColumnFiltersChange={setColumnFilters} />
+                        {Array.isArray(roles) && (
+                            <DataTable
+                                columns={getColumns(
+                                    setEditingRole,
+                                    setIsDialogOpen,
+                                    setRoleToDelete,
+                                    setIsDeleteDialogOpen,
+                                    handleManagePermissions
+                                )}
+                                data={roles}
+                                columnFilters={columnFilters}
+                                onColumnFiltersChange={setColumnFilters}
+                            />
+                        )}
                     </CardContent>
                 </Card>
             </div>
