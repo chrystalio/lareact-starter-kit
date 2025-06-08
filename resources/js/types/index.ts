@@ -4,6 +4,14 @@ export interface Auth {
     user: User;
 }
 
+export interface AuthUser {
+    id: number
+    name: string
+    email: string
+    permissions: string[]
+}
+
+
 export interface BreadcrumbItem {
     title: string;
     href: string;
@@ -19,6 +27,7 @@ export interface NavItem {
     url: string;
     icon?: LucideIcon | null;
     isActive?: boolean;
+    permission?: string;
 }
 
 export interface SharedData {
