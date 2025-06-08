@@ -28,7 +28,7 @@ class RolePermissionController extends Controller
     }
 
 
-    public function update(Request $request, Role $role): RedirectResponse
+    public function update(Request $request, Role $role): JsonResponse
     {
         $request->validate([
             'permissions' => ['array'],
@@ -37,6 +37,6 @@ class RolePermissionController extends Controller
 
         $role->syncPermissions($request->permissions ?? []);
 
-        return back()->with('success', 'Permissions updated.');
+        return response()->json(['message' => 'Permissions updated.']);
     }
 }
