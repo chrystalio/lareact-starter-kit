@@ -1,13 +1,17 @@
+import { usePage } from '@inertiajs/react';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
-import { type NavItem } from '@/types';
+import {
+    Sidebar, SidebarContent, SidebarFooter,
+    SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem
+} from '@/components/ui/sidebar';
+import { type NavItem, AuthUser } from '@/types';
 import { Link } from '@inertiajs/react';
 import { Github, LayoutGrid, UserCog, Users } from 'lucide-react';
 import AppLogo from './app-logo';
 
-const mainNavItems: NavItem[] = [
+const rawNavItems: NavItem[] = [
     {
         title: 'Dashboard',
         url: '/dashboard',
@@ -17,11 +21,13 @@ const mainNavItems: NavItem[] = [
         title: 'Users',
         url: '/admin/users',
         icon: Users,
+        permission: 'user.view',
     },
     {
-        'title': 'Roles',
-        'url': '/admin/roles',
-        'icon': UserCog,
+        title: 'Roles',
+        url: '/admin/roles',
+        icon: UserCog,
+        permission: 'role.view',
     }
 ];
 
@@ -34,6 +40,13 @@ const footerNavItems: NavItem[] = [
 ];
 
 export function AppSidebar() {
+    const { props } = usePage<{ auth: { user: AuthUser } }>()
+    const permissions: string[] = props.auth?.user?.permissions ?? [];
+
+    const mainNavItems = rawNavItems.filter(
+        item => !item.permission || permissions.includes(item.permission)
+    );
+
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
