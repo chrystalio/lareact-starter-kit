@@ -10,16 +10,19 @@ class SyncPermissions extends Command
     protected $signature = 'sync:permissions';
     protected $description = 'Sync permissions from storage/app/permission.json into the database';
 
+    /**
+     * @throws \JsonException
+     */
     public function handle(): int
     {
-        $path = storage_path('app/permission.json');
+        $path = base_path('permissions/permission.json');
 
         if (!file_exists($path)) {
             $this->error('permission.json file not found.');
             return self::FAILURE;
         }
 
-        $data = json_decode(file_get_contents($path), true);
+        $data = json_decode(file_get_contents($path), true, 512, JSON_THROW_ON_ERROR);
 
         if (!is_array($data)) {
             $this->error('Invalid JSON structure.');
