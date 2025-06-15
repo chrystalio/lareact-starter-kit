@@ -42,18 +42,26 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'name' => config('app.name'),
             'quote' => ['message' => trim($message), 'author' => trim($author)],
-            'auth' => [
-                'user' => fn () => $request->user() ? [
-                    'id' => $request->user()->id,
-                    'name' => $request->user()->name,
-                    'email' => $request->user()->email,
-                    'permissions' => $request->user()
-                        ->loadMissing('roles.permissions')
-                        ->getAllPermissions()
-                        ->pluck('name')
-                        ->toArray(),
-                ] : null,
-            ],
+            'auth' => function () use ($request) {
+                $user = $request->user();
+
+                if (!$user) {
+                    return null;
+                }
+
+                return [
+                    'user' => [
+                        'id' => $user->id,
+                        'name' => $user->name,
+                        'email' => $user->email,
+                        'permissions' => $user->loadMissing('roles.permissions')
+                            ->getAllPermissions()
+                            ->pluck('name')
+                            ->toArray(),
+                    ],
+                    'is_impersonating' => $user->isImpersonated(),
+                ];
+            }
         ];
     }
 
