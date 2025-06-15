@@ -93,7 +93,6 @@ export default function Index({ users, roles }: { users: User[], roles: string[]
                                 />
                             </div>
                         </FormDialog>
-
                     </CardContent>
                 </Card>
             </div>
