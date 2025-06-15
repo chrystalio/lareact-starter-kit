@@ -20,6 +20,11 @@
         "guard_name": "web"
     },
     {
+        "name": "user.impersonate",
+        "shortname": "Admin - Impersonate User",
+        "guard_name": "web"
+    },
+    {
         "name": "role.view",
         "shortname": "Admin - Manage Roles",
         "guard_name": "web"
