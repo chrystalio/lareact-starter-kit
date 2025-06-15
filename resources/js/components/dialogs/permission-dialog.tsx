@@ -65,7 +65,7 @@ export default function PermissionDialog({ role, permissions, assigned, onClose 
                             .map(([group, perms]) => (
                                 <div key={group}>
                                     <h3 className="my-3 font-medium capitalize">{group.replace('_', ' ')}</h3>
-                                    <div className="grid grid-cols-3 gap-2 md:grid-cols-4">
+                                    <div className="grid grid-cols-3 gap-2 md:grid-cols-6">
                                         {perms.map((permission) => (
                                             <label key={permission.name} className="flex items-center gap-2">
                                                 <Checkbox
