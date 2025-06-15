@@ -6,8 +6,14 @@ use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
+Route::impersonate();
+
 Route::get('/', function () {
-    return Inertia::render('welcome');
+    if (auth()->check()) {
+        return redirect()->route('dashboard');
+    }
+
+    return Inertia::render('auth/login');
 })->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
