@@ -1,5 +1,6 @@
+import { Link, usePage } from '@inertiajs/react';
 import type { ColumnDef } from '@tanstack/react-table'
-import type { User } from '@/types'
+import type { User, SharedData } from '@/types'
 import { Button } from '@/components/ui/button'
 import {
     DropdownMenu,
@@ -8,7 +9,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { LucideTrash, MoreHorizontal, PencilIcon, UserRoundPlus } from 'lucide-react';
+import { LucideTrash, MoreHorizontal, PencilIcon, UserCog, UserRoundPlus } from 'lucide-react';
 
 export function getColumns(
     setEditingUser: (user: User) => void,
@@ -34,6 +35,9 @@ export function getColumns(
             header: 'Actions',
             cell: ({ row }) => {
                 const user = row.original;
+                // eslint-disable-next-line react-hooks/rules-of-hooks
+                const { auth } = usePage<SharedData>().props;
+                const currentUser = auth.user;
 
                 return (
                     <DropdownMenu>
@@ -44,16 +48,24 @@ export function getColumns(
                         </DropdownMenuTrigger>
 
                         <DropdownMenuContent align="end" className="w-44">
-                            <DropdownMenuItem
+                            <DropdownMenuItem className="cursor-pointer text-blue-400 focus:bg-blue-100 focus:text-blue-500"
                                 onClick={() => {
                                     setEditingUser(user);
                                     setFormData({ roles: user.roles.map(r => r.name) });
                                     setIsDialogOpen(true);
                                 }}
                             >
-                                <UserRoundPlus className="h-4 w-4 mr-2" />
+                                <UserRoundPlus className="h-4 w-4 mr-2 hover:text-white" />
                                 Assign Roles
                             </DropdownMenuItem>
+                            {currentUser.id !== user.id && !user.roles.some((role) => role.name === "System Administrator") && (
+                                <DropdownMenuItem asChild className="cursor-pointer text-indigo-400 focus:bg-indigo-50 focus:text-indigo-600">
+                                    <Link href={route('impersonate', user.id)} method="get" as="button" className="w-full">
+                                        <UserCog className="h-4 w-4 mr-2 hover:text-white" />
+                                        Impersonate User
+                                    </Link>
+                                </DropdownMenuItem>
+                            )}
                             <DropdownMenuSeparator />
                             <DropdownMenuItem onClick={() => console.log('Edit user', user)}>
                                 <PencilIcon className="h-4 w-4 mr-2" />
